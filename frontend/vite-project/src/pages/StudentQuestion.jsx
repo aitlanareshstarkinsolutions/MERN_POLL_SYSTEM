@@ -1,55 +1,106 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import API from '../services/api';
-import socket  from '../socket';
-import ChatBox from '../components/ChatBox';
-import "./styles.css"
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import API from "../services/api";
+import socket from "../socket";
+import ChatBox from "../components/ChatBox";
+
 export default function StudentQuestion({ name }) {
   const { id } = useParams();
   const [poll, setPoll] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [submited, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
 
-  useEffect(()=>{
+  useEffect(() => {
+    // Fetch poll data
     const fetch = async () => {
       const res = await API.get(`/polls/${id}`);
       setPoll(res.data);
+      setTimeLeft(res.data.durationSeconds);
     };
     fetch();
-    socket.emit('joinPoll', id);
-    socket.on('pollUpdated', (p)=> setPoll(p));
-    socket.on('pollClosed', (p)=> setPoll(p));
-    return ()=> {
-      socket.off('pollUpdated'); socket.emit('leavePoll', id);
-    };
-  },[id]);
 
-  const submit = async () => {
-    if(selected === null) return alert('Select option');
-    socket.emit('submitAnswer', { pollId: id, optionIndex: selected });
+    // Join socket room
+    socket.emit("joinPoll", id);
+
+    // Socket listeners
+    socket.on("pollUpdated", (p) => setPoll(p));
+    socket.on("pollClosed", (p) => setPoll(p));
+
+    return () => {
+      socket.off("pollUpdated");
+      socket.emit("leavePoll", id);
+    };
+  }, [id]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!timeLeft || submitted || !poll?.active) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          socket.emit("closePoll", id); // auto close poll
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, submitted, poll, id]);
+
+  const submit = () => {
+    if (selected === null) return alert("Select option");
+    socket.emit("submitAnswer", { pollId: id, optionIndex: selected });
     setSubmitted(true);
   };
 
-  if(!poll) return <div className="center">Loading...</div>;
+  if (!poll) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+
+  const isClosed = !poll.active || timeLeft === 0;
 
   return (
-    <div className="container">
-      <h2 className="h1">Question 1 <span style={{marginLeft:8,color:'red'}}>⏱ {poll.durationSeconds}s</span></h2>
-      <div className="poll-wrap" style={{maxWidth:760}}>
-        <div className="poll-header">{poll.question}</div>
-        <div className="options">
-          {poll.options.map((opt,idx)=>(
-            <div key={idx} className="option-row" onClick={()=>setSelected(idx)} style={{cursor:'pointer',border:selected===idx ? `2px solid var(--purple)` : undefined}}>
-              <div className="option-num">{idx+1}</div>
-              <div className="option-text">{opt.text}</div>
+    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-6">
+      <h2 className="text-3xl font-bold flex items-center gap-2">
+        Question 1
+        <span className={`ml-2 ${timeLeft <= 5 ? "text-red-500" : "text-purple1"}`}>
+          ⏱ {timeLeft}s
+        </span>
+      </h2>
+
+      <div className="bg-white rounded-xl border border-purple-200 shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-purple1 to-purple2 text-white font-semibold px-6 py-3">
+          {poll.question}
+        </div>
+
+        <div className="flex flex-col p-4 gap-3">
+          {poll.options.map((opt, idx) => (
+            <div
+              key={idx}
+              className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer border ${
+                selected === idx ? "border-purple1" : "border-gray-200"
+              } hover:shadow-md transition`}
+              onClick={() => !isClosed && setSelected(idx)}
+            >
+              <div className="min-w-[38px] h-10 flex items-center justify-center rounded-full bg-purple1 text-white font-bold">
+                {idx + 1}
+              </div>
+              <div className="flex-1">{opt.text}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{marginTop:18}}>
-        <button className="button" onClick={submit} disabled={submited}>{submited ? 'Submitted' : 'Submit'}</button>
-      </div>
+      <button
+        className={`px-10 py-3 text-lg rounded-full text-white bg-gradient-to-r from-purple1 to-purple2 hover:opacity-90 transition ${
+          submitted || isClosed ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        onClick={submit}
+        disabled={submitted || isClosed}
+      >
+        {submitted ? "Submitted" : isClosed ? "Time Up" : "Submit"}
+      </button>
 
       <ChatBox pollId={id} />
     </div>
