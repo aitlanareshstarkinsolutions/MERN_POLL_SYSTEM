@@ -12,7 +12,6 @@ export default function StudentQuestion({ name }) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    // Fetch poll data
     const fetch = async () => {
       const res = await API.get(`/polls/${id}`);
       setPoll(res.data);
@@ -20,10 +19,7 @@ export default function StudentQuestion({ name }) {
     };
     fetch();
 
-    // Join socket room
     socket.emit("joinPoll", id);
-
-    // Socket listeners
     socket.on("pollUpdated", (p) => setPoll(p));
     socket.on("pollClosed", (p) => setPoll(p));
 
@@ -33,14 +29,13 @@ export default function StudentQuestion({ name }) {
     };
   }, [id]);
 
-  // Countdown timer
   useEffect(() => {
     if (!timeLeft || submitted || !poll?.active) return;
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          socket.emit("closePoll", id); // auto close poll
+          socket.emit("closePoll", id);
           return 0;
         }
         return prev - 1;
@@ -51,58 +46,92 @@ export default function StudentQuestion({ name }) {
   }, [timeLeft, submitted, poll, id]);
 
   const submit = () => {
-    if (selected === null) return alert("Select option");
-    socket.emit("submitAnswer", { pollId: id, optionIndex: selected });
-    setSubmitted(true);
-  };
+  if (selected === null) return alert("Select option");
+  socket.emit("submitAnswer", { pollId: id, optionIndex: selected });
+  setSubmitted(true);
+  
+  // redirect to results page
+  setTimeout(() => {
+    window.location.href = `/student/result/${id}`;
+  }, 500); // small delay
+};
 
-  if (!poll) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+
+  if (!poll) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
 
   const isClosed = !poll.active || timeLeft === 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-6">
-      <h2 className="text-3xl font-bold flex items-center gap-2">
-        Question 1
-        <span className={`ml-2 ${timeLeft <= 5 ? "text-red-500" : "text-purple1"}`}>
-          ⏱ {timeLeft}s
-        </span>
-      </h2>
-
-      <div className="bg-white rounded-xl border border-purple-200 shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-purple1 to-purple2 text-white font-semibold px-6 py-3">
-          {poll.question}
+    <div className="w-full">
+      <div className="max-w-xl mx-auto px-4 py-10 flex flex-col gap-8">
+        {/* Question header */}
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold">Question 1</h2>
+          <div className="flex items-center gap-2">
+            <span className="text-lg">⏱</span>
+            <span className="font-semibold text-red-500">
+              {String(timeLeft).padStart(2, "0")}s
+            </span>
+          </div>
         </div>
 
-        <div className="flex flex-col p-4 gap-3">
-          {poll.options.map((opt, idx) => (
-            <div
-              key={idx}
-              className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer border ${
-                selected === idx ? "border-purple1" : "border-gray-200"
-              } hover:shadow-md transition`}
-              onClick={() => !isClosed && setSelected(idx)}
-            >
-              <div className="min-w-[38px] h-10 flex items-center justify-center rounded-full bg-purple1 text-white font-bold">
-                {idx + 1}
+        {/* Question Card */}
+        <div className="rounded-md border border-gray-300 shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold px-5 py-3">
+            {poll.question}
+          </div>
+
+          <div className="flex flex-col p-4 gap-3">
+            {poll.options.map((opt, idx) => (
+              <div
+                key={idx}
+                onClick={() => !isClosed && setSelected(idx)}
+                className={`flex items-center gap-4 p-3 rounded-md border cursor-pointer transition ${
+                  selected === idx
+                    ? "border-purple-500 bg-white"
+                    : "border-gray-200 bg-gray-100"
+                }`}
+              >
+                <div
+                  className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold ${
+                    selected === idx
+                      ? "bg-purple-500 text-white"
+                      : "bg-gray-300 text-gray-700"
+                  }`}
+                >
+                  {idx + 1}
+                </div>
+                <div className="flex-1">{opt.text}</div>
               </div>
-              <div className="flex-1">{opt.text}</div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        {/* Submit button */}
+        {/* Submit button */}
+        <div className="flex justify-end">
+          <button
+            className={`px-6 py-3 text-lg rounded-full text-white font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 hover:opacity-90 transition ${
+              submitted || isClosed ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={submit}
+            disabled={submitted || isClosed}
+          >
+            {submitted ? "Submitted" : isClosed ? "Time Up" : "Submit"}
+          </button>
+        </div>
+
+        {/* Chatbox (bottom-right bubble) */}
+        <div className="fixed bottom-6 right-6">
+          <ChatBox pollId={id} />
         </div>
       </div>
-
-      <button
-        className={`px-10 py-3 text-lg rounded-full text-white bg-gradient-to-r from-purple1 to-purple2 hover:opacity-90 transition ${
-          submitted || isClosed ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={submit}
-        disabled={submitted || isClosed}
-      >
-        {submitted ? "Submitted" : isClosed ? "Time Up" : "Submit"}
-      </button>
-
-      <ChatBox pollId={id} />
     </div>
   );
 }

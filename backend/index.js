@@ -45,7 +45,10 @@ const io = new Server(server, {
 
 // --- Routes ---
 app.use("/api/polls", pollRoutes);
+const participantRoutes = require("./routes/participantRoutes");
 
+// Mount routes
+app.use("/api/participants", participantRoutes);
 // --- Socket events ---
 io.on("connection", (socket) => {
   console.log("✅ Socket connected:", socket.id);

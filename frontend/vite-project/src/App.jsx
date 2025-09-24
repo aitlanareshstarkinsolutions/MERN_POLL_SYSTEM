@@ -8,6 +8,7 @@ import StudentWait from "./pages/StudentWait";
 import StudentQuestion from "./pages/StudentQuestion";
 import PollHistory from "./pages/PollHistory";
 import ResultsView from "./pages/ResultsView";
+import StudentResult from "./pages/StudentResult";
 import socket from "./socket";
 
 export default function App() {
@@ -36,6 +37,8 @@ export default function App() {
           path="/student/question/:id"
           element={<StudentQuestion name={name} socket={socket} />}
         />
+        <Route path="/student/result/:id" element={<StudentResult />} />
+
         <Route path="/history" element={<PollHistory />} />
         <Route path="/results/:id" element={<ResultsView />} />
       </Routes>
