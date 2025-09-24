@@ -1,0 +1,57 @@
+:root{
+  --purple:#7765DA;
+  --purple2:#5767D0;
+  --purple3:#4F0DCE;
+  --light:#F2F2F2;
+  --dark:#373737;
+  --muted:#6E6E6E;
+  --radius:12px;
+  --max-width:900px;
+  font-family: Inter, system-ui, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--dark);font-size:16px}
+.app-root{padding:40px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.container{max-width:var(--max-width);width:100%}
+
+/* general card */
+.card{background:#fff;border-radius:12px;padding:18px;border:2px solid rgba(119,101,218,0.12);box-shadow:0 6px 30px rgba(0,0,0,0.04)}
+.header{display:flex;align-items:center;gap:12px}
+.h1{font-size:36px;margin:24px 0 12px;font-weight:700}
+.sub{color:var(--muted);margin-bottom:24px}
+
+/* role cards */
+.role-row{display:flex;gap:24px;justify-content:center;margin:36px 0}
+.role-card{flex:1;min-width:260px;padding:18px;border-radius:12px;border:2px solid rgba(119,101,218,0.08)}
+.role-card.selected{box-shadow:0 6px 30px rgba(119,101,218,0.12);border-color:var(--purple);}
+
+/* form */
+.input{width:100%;padding:14px;border-radius:8px;border:1px solid #e6e6e6;background:var(--light);font-size:16px}
+.button{background:linear-gradient(90deg,var(--purple),var(--purple2));color:white;padding:14px 36px;border-radius:36px;border:none;font-size:18px;cursor:pointer}
+.small-btn{background:none;border:2px solid var(--purple);padding:10px 14px;border-radius:12px;color:var(--purple);cursor:pointer}
+
+/* poll card */
+.poll-wrap{border-radius:10px;overflow:hidden;border:1px solid rgba(119,101,218,0.15);padding:0}
+.poll-header{background:linear-gradient(90deg, #4b4b4b, #6b6b6b);color:white;padding:16px;font-weight:600}
+.options{padding:18px}
+.option-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px;border-radius:8px;background:var(--light);position:relative}
+.option-num{min-width:38px;height:38px;border-radius:50%;background:var(--purple);color:white;display:flex;align-items:center;justify-content:center;font-weight:700}
+.option-text{flex:1}
+.progress{height:36px;border-radius:8px;background:#ddd;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--purple2));width:0;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;color:#fff;font-weight:700}
+
+/* inline percentage box */
+.percent-box{min-width:60px;text-align:center;font-weight:700;color:var(--dark)}
+
+/* chat box */
+.chat-box{position:fixed;right:24px;bottom:24px;width:320px;background:white;border-radius:12px;border:1px solid rgba(0,0,0,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.08);overflow:hidden}
+.chat-head{background:linear-gradient(90deg,var(--purple),var(--purple2));color:white;padding:10px}
+.chat-messages{padding:12px;min-height:140px;max-height:260px;overflow:auto}
+.msg{padding:10px;border-radius:12px;display:inline-block;margin:6px 0;max-width:80%}
+.msg.me{background:var(--purple);color:#fff;align-self:flex-end}
+.msg.them{background:#f1f1f1;color:var(--dark)}
+.chat-input{display:flex;gap:8px;padding:10px;border-top:1px solid #eee}
+
+/* small helpers */
+.center{display:flex;justify-content:center;align-items:center;flex-direction:column}
+.mt24{margin-top:24px}
