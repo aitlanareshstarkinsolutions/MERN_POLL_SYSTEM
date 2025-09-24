@@ -41,9 +41,9 @@ export default function PollHistory() {
         {polls.length === 0 ? (
           <p className="text-gray-500">No polls found.</p>
         ) : (
-          polls.map((p) => {
+          polls?.map((p) => {
             const totalVotes =
-              p.options.reduce((sum, o) => sum + (o.votes || 0), 0) || 1;
+              p?.options?.reduce((sum, o) => sum + (o.votes || 0), 0) || 1;
 
             return (
               <div
@@ -57,7 +57,7 @@ export default function PollHistory() {
 
                 {/* Options */}
                 <div className="p-6 space-y-3">
-                  {p.options.map((o, idx) => {
+                  {p?.options?.map((o, idx) => {
                     const pct = Math.round(((o.votes || 0) / totalVotes) * 100);
                     return (
                       <div

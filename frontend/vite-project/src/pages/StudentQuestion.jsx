@@ -88,7 +88,7 @@ export default function StudentQuestion({ name }) {
           </div>
 
           <div className="flex flex-col p-4 gap-3">
-            {poll.options.map((opt, idx) => (
+            {poll?.options?.map((opt, idx) => (
               <div
                 key={idx}
                 onClick={() => !isClosed && setSelected(idx)}

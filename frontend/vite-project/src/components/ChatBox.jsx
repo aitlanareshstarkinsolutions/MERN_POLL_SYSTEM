@@ -126,7 +126,7 @@ export default function ChatBox({ pollId, role = "student" }) {
           <div className="flex-1 overflow-y-auto p-3">
             {tab === "chat" && (
               <div className="flex flex-col gap-2">
-                {messages.map((m, i) => (
+                {messages?.map((m, i) => (
                   <div
                     key={i}
                     className={`max-w-[75%] px-3 py-2 rounded-lg ${
@@ -146,7 +146,7 @@ export default function ChatBox({ pollId, role = "student" }) {
 
             {tab === "participants" && (
               <ul className="flex flex-col gap-2">
-                {participants.map((p) => (
+                {participants?.map((p) => (
                   <li
                     key={p._id || p.id}
                     className="flex justify-between items-center border p-2 rounded-md"

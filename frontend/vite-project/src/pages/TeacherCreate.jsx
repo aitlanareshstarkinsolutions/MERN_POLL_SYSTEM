@@ -25,7 +25,7 @@ export default function TeacherCreate({ name, socket: sock }) {
     ]);
 
   const toggleCorrect = (i) => {
-    const next = options.map((o, idx) => ({
+    const next = options?.map((o, idx) => ({
       ...o,
       isCorrect: idx === i ? !o.isCorrect : o.isCorrect,
     }));
@@ -111,7 +111,7 @@ export default function TeacherCreate({ name, socket: sock }) {
       {/* Options */}
       <div className="mt-10 max-w-3xl ">
         <h3 className="text-xl font-semibold">Edit Options</h3>
-        {options.map((o, i) => (
+        {options?.map((o, i) => (
           <div
             key={i}
             className="flex items-center gap-4 mt-4 p-3 rounded-lg bg-gray-50 border border-gray-200"

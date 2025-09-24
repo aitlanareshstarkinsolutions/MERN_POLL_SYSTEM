@@ -15,7 +15,7 @@ export default function ResultsView() {
   },[id]);
 
   if(!poll) return <div className="center">Loading...</div>;
-  const total = poll.options.reduce((s,o)=> s + (o.votes||0),0) || 1;
+  const total = poll?.options?.reduce((s,o)=> s + (o.votes||0),0) || 1;
 
   return (
     <div className="container">
@@ -23,7 +23,7 @@ export default function ResultsView() {
       <div className="poll-wrap" style={{maxWidth:760}}>
         <div className="poll-header">{poll.question}</div>
         <div className="options">
-          {poll.options.map((opt,idx)=>{
+          {poll?.options?.map((opt,idx)=>{
             const pct = Math.round(((opt.votes||0)/total)*100);
             return (
               <div key={idx} className="option-row">

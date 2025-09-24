@@ -32,7 +32,7 @@ export default function StudentResult() {
     );
   }
 
-  const totalVotes = poll.options.reduce((acc, o) => acc + (o.votes || 0), 0);
+  const totalVotes = poll?.options?.reduce((acc, o) => acc + (o.votes || 0), 0);
 
   return (
     <div className="w-full">
@@ -49,7 +49,7 @@ export default function StudentResult() {
           </div>
 
           <div className="flex flex-col p-4 gap-3">
-            {poll.options.map((opt, idx) => {
+            {poll?.options?.map((opt, idx) => {
               const percentage =
                 totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
               return (

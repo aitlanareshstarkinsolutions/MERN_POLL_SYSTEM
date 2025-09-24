@@ -8,7 +8,7 @@ const PollCard = ({ poll, onVote, isTeacher = false }) => {
       <h3 className="poll-question">{poll.question}</h3>
 
       <ul className="poll-options">
-        {poll.options.map((option, index) => (
+        {poll?.options?.map((option, index) => (
           <li key={index} className="poll-option">
             {isTeacher ? (
               // Teacher view: show vote counts

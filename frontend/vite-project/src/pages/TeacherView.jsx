@@ -43,7 +43,7 @@ export default function TeacherView() {
     );
 
   const totalVotes =
-    poll.options.reduce((sum, o) => sum + (o.votes || 0), 0) || 1;
+    poll?.options?.reduce((sum, o) => sum + (o.votes || 0), 0) || 1;
 
   return (
     <div className="w-full flex flex-col items-center py-10 px-4 bg-gray-50 min-h-screen">
@@ -87,7 +87,7 @@ export default function TeacherView() {
         </div>
 
         <div className="p-6 space-y-4">
-          {poll.options.map((opt, idx) => {
+          {poll?.options?.map((opt, idx) => {
             const pct = Math.round((opt.votes / totalVotes) * 100);
             return (
               <div
