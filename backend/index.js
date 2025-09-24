@@ -17,7 +17,7 @@ app.use(express.json());
 const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:3000",
   process.env.FRONTEND_URL || "http://localhost:5173",
-  "http://checkingpollingsystem.com",
+  "https://checkingpollingsystem.com.dynoark.com",
 ];
 
 // ✅ Apply CORS to Express
